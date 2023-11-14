@@ -7,18 +7,30 @@ pygame.init()
 # Définition des couleurs
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
 
 # Définition de la taille de la fenêtre
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Drag and Drop Nodes")
 
-# Définition des nœuds initiaux
+# Définition de la classe Node
+class Node:
+    def __init__(self, x, y, couleur):
+        self.x = x
+        self.y = y
+        self.couleur = couleur
+
+# Initialisation des nœuds
 nodes = [
-    (100, 100),
-    (200, 200),
-    (300, 300),
-    (400, 400),
+    Node(100, 100, RED),
+    Node(200, 200, GREEN),
+    Node(300, 300, BLUE),
+    Node(400, 400, RED),
+    Node(500, 500, GREEN),
+    Node(600, 100, BLUE),
 ]
 
 # Liste pour stocker les liaisons entre les nœuds
@@ -27,13 +39,15 @@ connections = []
 # Fonction pour dessiner les nœuds
 def draw_nodes():
     for node in nodes:
-        pygame.draw.circle(screen, WHITE, node, 10)
+        pygame.draw.circle(screen, node.couleur, (node.x, node.y), 10)
 
 # Fonction pour dessiner les connexions
 def draw_connections():
     for connection in connections:
-        pygame.draw.line(screen, WHITE, connection[0], connection[1], 2)
-
+        start_pos = (connection[0].x, connection[0].y)
+        end_pos = (connection[1].x, connection[1].y)
+        pygame.draw.line(screen, WHITE, start_pos, end_pos, 2)
+        
 # Boucle principale
 running = True
 dragging = False
@@ -49,7 +63,7 @@ while running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # Clic gauche
                 for node in nodes:
-                    if pygame.Rect(node[0] - 10, node[1] - 10, 20, 20).collidepoint(event.pos):
+                    if pygame.Rect(node.x - 10, node.y - 10, 20, 20).collidepoint(event.pos):
                         dragging = True
                         current_connection = [node, event.pos]
                         break
@@ -60,7 +74,7 @@ while running:
             # Vérifie si le drop est sur un nœud, sinon supprime la connexion
             drop_on_node = False
             for node in nodes:
-                if pygame.Rect(node[0] - 10, node[1] - 10, 20, 20).collidepoint(event.pos):
+                if pygame.Rect(node.x - 10, node.y - 10, 20, 20).collidepoint(event.pos):
                     connections.append([current_connection[0], node])
                     drop_on_node = True
                     break
@@ -72,8 +86,8 @@ while running:
 
     # Dessine la ligne en cours de drag
     if dragging:
-        pygame.draw.line(screen, WHITE, current_connection[0], current_connection[1], 2)
-
+        print(screen,"/", WHITE, (current_connection[0].x, current_connection[0].y),"/", current_connection[1])
+        pygame.draw.line(screen, WHITE, (current_connection[0].x, current_connection[0].y), current_connection[1], 2)
     pygame.display.flip()
 
 # Quitte Pygame
