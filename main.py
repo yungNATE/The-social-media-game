@@ -21,7 +21,21 @@ class Node:
     def __init__(self, x, y, couleur):
         self.x = x
         self.y = y
+        self.connections = {couleur:1}
+        self.last_connection = None # Pour changement de couleur >= 
         self.couleur = couleur
+    
+    # change si >
+    def change_color(self):
+        print(max(self.connections, key=self.connections.get))
+        self.couleur = max(self.connections, key = self.connections.get)
+    
+    """
+    # change si >=
+    def change_color(self):
+        print(max(self.connections, key=self.connections.get))
+        self.couleur = self.last_connection if list(self.connections.values()).count(max(self.connections.values()))>1 else max(self.connections, key = self.connections.get)
+"""
 
 # Initialisation des nœuds
 nodes = [
@@ -77,9 +91,18 @@ while running:
                 if pygame.Rect(node.x - 10, node.y - 10, 20, 20).collidepoint(event.pos):
                     connections.append([current_connection[0], node])
                     drop_on_node = True
+                    # stock la couleur du noeud lie
+                    if current_connection[0].couleur in node.connections:
+                        node.connections[(current_connection[0].couleur)] += 1
+                    else:
+                        node.connections[(current_connection[0].couleur)] = 1
+                    # change la couleur du noeud en fonction de ses liens (définir intéraction pour nombre de liens égaux)
+                    node.last_connection = current_connection[0].couleur
+                    node.change_color()
                     break
             if not drop_on_node:
                 current_connection = []
+            
 
     draw_nodes()
     draw_connections()
