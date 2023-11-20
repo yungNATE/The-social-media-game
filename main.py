@@ -26,27 +26,28 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Clic gauche
                     for node in map.nodes:
                         if pygame.Rect(node.x - 10, node.y - 10, 20, 20).collidepoint(event.pos):
                             dragging = True
-                            current_connection = [node, event.pos]
+                            cursorPosition = event.pos
+                            current_connection = [node, cursorPosition]
                             break
+
             elif event.type == pygame.MOUSEMOTION and dragging:
                 current_connection[1] = event.pos
+
             elif event.type == pygame.MOUSEBUTTONUP and dragging:
                 dragging = False
                 # Vérifie si le drop est sur un nœud, sinon supprime la connexion
                 drop_on_node = False
                 for node in map.nodes:   
                     if pygame.Rect(node.x - 10, node.y - 10, 20, 20).collidepoint(event.pos):
-                        # Autorise que une connection entre 2 noeuds
-                        if [current_connection[0], node] in map.connections :
-                            current_connection = []
-                            print("Lien déjà existent")
-                            break
-                        map.connections.append([current_connection[0], node])
+                        isConnectionSuccessful = map.add_connection(current_connection[0], node)
+                        if not isConnectionSuccessful: break
+
                         drop_on_node = True
                         # stock la couleur du noeud lie
                         if current_connection[0].couleur in node.connections:
@@ -56,7 +57,7 @@ if __name__ == "__main__":
                         # change la couleur du noeud en fonction de ses liens (définir intéraction pour nombre de liens égaux)
                         node.last_connection = current_connection[0].couleur
                         node.change_color()
-                        print(map.connections)
+                        # print(map.connections)
                         break
                 if not drop_on_node:
                     current_connection = []
@@ -65,7 +66,7 @@ if __name__ == "__main__":
             
         # Dessine la ligne en cours de drag
         if dragging:
-            print(map.screen,"/", WHITE, (current_connection[0].x, current_connection[0].y),"/", current_connection[1])
+            # print(map.screen,"/", WHITE, (current_connection[0].x, current_connection[0].y),"/", current_connection[1])
             pygame.draw.line(map.screen, WHITE, (current_connection[0].x, current_connection[0].y), current_connection[1], 2)
     
 

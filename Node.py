@@ -7,13 +7,15 @@ class Node:
         self.y = y
         self.connections = {couleur:1}
         self.last_connection = None # Pour changement de couleur >= 
+        ## ↘️ TODO : voir si on garde cette histoire de priorité ou si on affiche des teinte intermédiaires
         self.couleur = couleur
         
     # change si >
     def change_color(self):
-        print(max(self.connections, key=self.connections.get))
+        # print(max(self.connections, key=self.connections.get))
         self.couleur = max(self.connections, key = self.connections.get)
-    
+
+
     """
     # change si >=
     def change_color(self):

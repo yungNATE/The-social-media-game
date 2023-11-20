@@ -85,6 +85,18 @@ class MAP(Window):
             ]
         self.text_niveau = f"Niveau {n}"
 
+        # Autorise une connection entre 2 noeuds
+    def add_connection(self, nodeA, nodeB) :
+
+        # Si le lien nodeA et nodeB existe déjà, peut import l'ordre, on ne fait rien
+        if [nodeA, nodeB] in self.connections or [nodeB, nodeA] in self.connections:
+            current_connection = []
+            print("Lien déjà existant")
+            return False
+
+        self.connections.append([nodeA, nodeB])
+        return True 
+
     def afficher_contenu(self):
         self.screen.fill(BLACK)
         self.afficher_texte("Drag and Drop Nodes", self.largeur // 2, self.hauteur // 40)
