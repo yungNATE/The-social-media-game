@@ -2,6 +2,7 @@ import pygame
 import sys
 from abc import ABC, abstractmethod
 from Node import Node
+import utility_functions as uf
 
 # Définition des couleurs
 WHITE = (255, 255, 255)
@@ -63,45 +64,43 @@ class MAP(Window):
         pygame.display.set_caption(titre)
     
     # Fonction pour dessiner les nœuds
-    def draw_nodes(self, node):
-        pygame.draw.circle(self.screen, node.couleur, (node.x, node.y), 10)
+    def draw_nodes(self, nodes):
+        for node in nodes:
+            pygame.draw.circle(self.screen, node.couleur, (node.x, node.y), 10)
     
     # Fonction pour dessiner les connexions
-    def draw_connections(self, connection):
-        start_pos = (connection[0].x, connection[0].y)
-        end_pos = (connection[1].x, connection[1].y)
-        pygame.draw.line(self.screen, WHITE, start_pos, end_pos, 2)
+    def draw_connections(self, nodes):
+        for node in self.nodes:    
+            for connection in node.connections:        
+                start_pos = (node.x, node.y)
+                end_pos = (connection.x, connection.y)
+                # pygame.draw.line(self.screen, WHITE, start_pos, end_pos, 2)
+                uf.draw_arrow(self.screen, pygame.Vector2(start_pos), pygame.Vector2(end_pos), WHITE, 2, 12, 5)
 
     def initialiser_niveau(self, n):
         # Initialisation des nœuds
         if n == 1:
             self.nodes = [
                 Node(100, 100, RED),
+                Node(150, 100, RED),
                 Node(200, 200, GREEN),
                 Node(300, 300, BLUE),
+                Node(300, 350, BLUE),
                 Node(400, 400, RED),
                 Node(500, 500, GREEN),
                 Node(600, 100, BLUE),
             ]
         self.text_niveau = f"Niveau {n}"
 
-        # Autorise une connection entre 2 noeuds
-    def add_connection(self, nodeA, nodeB) :
-
-        # Si le lien nodeA et nodeB existe déjà, peut import l'ordre, on ne fait rien
-        if [nodeA, nodeB] in self.connections or [nodeB, nodeA] in self.connections:
-            current_connection = []
-            print("Lien déjà existant")
-            return False
-
-        self.connections.append([nodeA, nodeB])
-        return True 
-
     def afficher_contenu(self):
         self.screen.fill(BLACK)
         self.afficher_texte("Drag and Drop Nodes", self.largeur // 2, self.hauteur // 40)
         self.afficher_texte(self.text_niveau, self.largeur // 2, self.hauteur // 15)
+
+        
+        self.draw_nodes(self.nodes)
+        self.draw_connections(self.nodes)
+
+    def update_nodes(self):
         for node in self.nodes:
-            self.draw_nodes(node)
-        for connection in self.connections:
-            self.draw_connections(connection)
+            node.update_color()
