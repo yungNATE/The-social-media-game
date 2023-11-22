@@ -44,11 +44,11 @@ if __name__ == "__main__":
                 dragging = False
                 # Vérifie si le drop est sur un nœud, sinon supprime la connexion
                 drop_on_node = False
-                for node in map.nodes:   
-                    if pygame.Rect(node.x - 10, node.y - 10, 20, 20).collidepoint(event.pos):
+                for node in map.nodes:
+                    reached_node = pygame.Rect(node.x - 10, node.y - 10, 20, 20).collidepoint(event.pos)
+                    if reached_node:
                         drop_on_node = True
                         
-                        # isConnectionSuccessful = map.add_connection(current_connection[0], node)
                         # print(current_connection)
                         isConnectionSuccessful = current_connection[0].add_connection(node)
                         if not isConnectionSuccessful: break
