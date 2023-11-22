@@ -5,24 +5,44 @@ class Node:
     def __init__(self, x, y, couleur):
         self.x = x
         self.y = y
-        self.connections = []
-        self.last_connection = None # Pour changement de couleur >= 
-        ## ↘️ TODO : voir si on garde cette histoire de priorité ou si on affiche des teinte intermédiaires
+        self.following = []   # following
+        self.followers = []     # followers
         self.couleur = couleur
+        self.size = 10 # radius du cercle
+        self.reach = 150 #px
         
-    def add_connection(self, node):
-        # if node not in self.connections and self not in node.connections:
-        if node not in self.connections and node != self:
-            self.connections.append(node)
+    def follow(self, node):
+        if node not in self.following and node != self:
+            self.following.append(node)
             self.update_color()
+
+            node.add_follower(self)
             return True
 
         return False
 
+    def add_follower(self, node):
+        if node not in self.followers and node != self:
+            self.followers.append(node)
+            self.update_size()
+
+    def update_size(self):
+        self.set_size(10 + len(self.followers) * 4)
+        self.update_reach()
+
+    def update_reach(self):
+        self.set_reach(150 + len(self.followers) * 100)
+
+    def set_reach(self, reach):
+        self.reach = reach
+
+    def set_size(self, size):
+        self.size = size
+
     def update_color(self):
         colors = {self.couleur: 1}
 
-        for node in self.connections:
+        for node in self.following:
             if node.couleur in colors:
                 colors[node.couleur] += 1
             else:

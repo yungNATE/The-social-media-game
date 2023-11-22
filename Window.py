@@ -66,12 +66,13 @@ class MAP(Window):
     # Fonction pour dessiner les nœuds
     def draw_nodes(self, nodes):
         for node in nodes:
-            pygame.draw.circle(self.screen, node.couleur, (node.x, node.y), 10)
+            pygame.draw.circle(self.screen, node.couleur, (node.x, node.y), node.size)
+            
     
     # Fonction pour dessiner les connexions
     def draw_connections(self, nodes):
         for node in self.nodes:    
-            for connection in node.connections:        
+            for connection in node.following:        
                 start_pos = (node.x, node.y)
                 end_pos = (connection.x, connection.y)
                 uf.draw_arrow(self.screen, pygame.Vector2(start_pos), pygame.Vector2(end_pos), WHITE, 2, 12, 5)
