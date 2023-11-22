@@ -74,7 +74,6 @@ class MAP(Window):
             for connection in node.connections:        
                 start_pos = (node.x, node.y)
                 end_pos = (connection.x, connection.y)
-                # pygame.draw.line(self.screen, WHITE, start_pos, end_pos, 2)
                 uf.draw_arrow(self.screen, pygame.Vector2(start_pos), pygame.Vector2(end_pos), WHITE, 2, 12, 5)
 
     def initialiser_niveau(self, n):
