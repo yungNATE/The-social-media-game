@@ -49,14 +49,14 @@ class Menu(Window):
             sys.exit()
 
 
+class Screen(Window):
+    def __init__(self, largeur, hauteur, titre):
+        super().__init__(largeur, hauteur, titre)
+
+
 class MAP(Window):
     def __init__(self, largeur, hauteur, titre):
         super().__init__(largeur, hauteur, titre)
-        nb_lignes = 10
-        nb_colonnes = 10
-        # Calcul de la taille des spots en fonction de la fenêtre
-        self.taille_spot = min(largeur // nb_colonnes, hauteur // nb_lignes)
-        #self.matrice_nodes = [[None for _ in range(nb_colonnes)] for _ in range(nb_lignes)]
         self.node = []
         self.connections = []
         self.screen = pygame.display.set_mode((largeur, hauteur))
@@ -79,18 +79,34 @@ class MAP(Window):
 
     def initialiser_niveau(self, n):
         # Initialisation des nœuds
-        if n == 1:
+        if n == "Tuto":
             self.nodes = [
-                Node(100, 100, RED),
-                Node(150, 100, RED),
-                Node(200, 200, GREEN),
-                Node(300, 300, BLUE),
-                Node(300, 350, BLUE),
-                Node(400, 400, RED),
-                Node(500, 500, GREEN),
-                Node(600, 100, BLUE),
+                Node(400, 200, RED),
+                Node(350, 200, RED),
+                Node(375, 300, GREEN),
             ]
-        self.text_niveau = f"Niveau {n}"
+        if n == "Tuto 2":
+            self.nodes = [
+                Node(400, 200, RED),
+                Node(350, 200, RED),
+                Node(375, 375, GREEN),
+            ]
+
+        if n == "Niveau 1":
+            self.nodes = [
+                Node(200, 200, RED),
+                Node(200, 100, BLUE),
+                Node(100, 200, GREEN),
+                Node(500, 450, BLUE),
+                Node(300, 450, GREEN),
+                Node(500, 550, RED),
+            ]
+
+        if n == "Niveau 2":
+            self.nodes = [
+            ]
+
+        self.text_niveau = f"{n}"
 
     def afficher_contenu(self):
         self.screen.fill(BLACK)
@@ -104,3 +120,9 @@ class MAP(Window):
     def update_nodes(self):
         for node in self.nodes:
             node.update_color()
+
+    def win_condition(self):
+        if len(set([node.couleur for node in self.nodes])) == 1:
+            return True
+        else:
+            return False

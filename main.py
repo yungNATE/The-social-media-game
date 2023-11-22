@@ -17,7 +17,13 @@ if __name__ == "__main__":
     # Initialisation de Pygame
     pygame.init()
     map = MAP(800, 600, "Jeu")
-    map.initialiser_niveau(1)
+    cpt = 0
+    lvl_list = ["Tuto", "Tuto 2", "Niveau 1", "Niveau 2"]
+    current_level = lvl_list[0]
+    map.initialiser_niveau("Tuto")
+    # map.initialiser_niveau("Tuto 2")
+    # map.initialiser_niveau("Niveau 1")
+    # map.initialiser_niveau("Niveau 2")
     # Boucle principale
     dragging = False
     current_node = None
@@ -26,6 +32,10 @@ if __name__ == "__main__":
     limited_cursor_position = (0,0)
 
     while True:
+        if map.win_condition() :
+            cpt+=1
+            current_level = lvl_list[cpt]
+            map.initialiser_niveau(current_level)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

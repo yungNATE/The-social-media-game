@@ -9,7 +9,7 @@ class Node:
         self.followers = []     # followers
         self.couleur = couleur
         self.size = 10 # radius du cercle
-        self.reach = 150 #px
+        self.reach = 100 #px (taille max des liens)
         
     def follow(self, node):
         if node not in self.following and node != self:
@@ -31,7 +31,7 @@ class Node:
         self.update_reach()
 
     def update_reach(self):
-        self.set_reach(150 + len(self.followers) * 100)
+        self.set_reach(100 + len(self.followers) * 100)
 
     def set_reach(self, reach):
         self.reach = reach
