@@ -4,6 +4,7 @@ import utility_functions as uf
 import sys
 from Window import MAP
 from Node import Node
+import time
 
 # Définition des couleurs
 WHITE = (255, 255, 255)
@@ -32,10 +33,31 @@ if __name__ == "__main__":
     limited_cursor_position = (0,0)
 
     while True:
-        if map.win_condition() :
+        if map.win_condition() == True :
             cpt+=1
+            time.sleep(3)
+            map.win_screen(current_level)
+            pygame.display.flip()
+            time.sleep(3)
             current_level = lvl_list[cpt]
             map.initialiser_niveau(current_level)
+        
+        if map.win_condition() == "hidden_win":
+            cpt+=1
+            time.sleep(3)
+            map.win_screen("hidden_win")
+            pygame.display.flip()
+            time.sleep(3)
+            current_level = lvl_list[cpt]
+            map.initialiser_niveau(current_level)
+
+        # if map.lose_condition() :
+        #     time.sleep(3)
+        #     map.lose_screen()
+        #     pygame.display.flip()
+        #     time.sleep(3)
+        #     current_level = lvl_list[cpt]
+        #     map.initialiser_niveau(current_level)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -69,8 +91,16 @@ if __name__ == "__main__":
                         drop_on_node = True
                         
                         isFollowSuccessful = current_node.follow(node)
-                        if isFollowSuccessful: map.update_nodes()
-                        else: break
+                        if isFollowSuccessful: 
+                            map.update_nodes()
+                            map.border_screen(color=GREEN)
+                            
+
+    
+                        else: 
+                            map.border_screen(color=RED)
+                            break
+
                 
                 if not drop_on_node:
                     current_node = None
@@ -109,8 +139,8 @@ if __name__ == "__main__":
 
             current_node_position = (current_node.x, current_node.y)
             # pygame.draw.line(map.screen, WHITE, current_node_position, virtual_point_to_draw_line_with_max_length, 2)
-            uf.draw_arrow(map.screen, pygame.Vector2(current_node_position), pygame.Vector2(virtual_point_to_draw_line_with_max_length), WHITE, 2, 12, 5)
             
+            uf.draw_arrow(map.screen, pygame.Vector2(current_node_position), pygame.Vector2(virtual_point_to_draw_line_with_max_length), WHITE, 2, 12, 10)
     
 
         pygame.display.flip()

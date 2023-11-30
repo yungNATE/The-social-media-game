@@ -10,6 +10,9 @@ class Node:
         self.couleur = couleur
         self.size = 10 # radius du cercle
         self.reach = 100 #px (taille max des liens)
+        self.activations = {'size' : True, 
+                            'reach' : True, 
+                            'color' : True}
         
     def follow(self, node):
         if node not in self.following and node != self:
@@ -27,11 +30,13 @@ class Node:
             self.update_size()
 
     def update_size(self):
-        self.set_size(10 + len(self.followers) * 4)
-        self.update_reach()
+        if self.activations['size']:
+            self.set_size(10 + len(self.followers) * 4)
+            self.update_reach()
 
     def update_reach(self):
-        self.set_reach(100 + len(self.followers) * 100)
+        if self.activations['reach']:
+            self.set_reach(100 + len(self.followers) * 100)
 
     def set_reach(self, reach):
         self.reach = reach
@@ -40,15 +45,16 @@ class Node:
         self.size = size
 
     def update_color(self):
-        colors = {self.couleur: 1}
+        if self.activations['color']:
+            colors = {self.couleur: 1}
 
-        for node in self.following:
-            if node.couleur in colors:
-                colors[node.couleur] += 1
-            else:
-                colors[node.couleur] = 1
+            for node in self.following:
+                if node.couleur in colors:
+                    colors[node.couleur] += 1
+                else:
+                    colors[node.couleur] = 1
 
-        print(colors)
-        print(max(colors, key = colors.get))
+            print(colors)
+            print(max(colors, key = colors.get))
 
-        self.couleur = max(colors, key = colors.get)
+            self.couleur = max(colors, key = colors.get)

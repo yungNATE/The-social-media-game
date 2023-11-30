@@ -3,6 +3,7 @@ import sys
 from abc import ABC, abstractmethod
 from Node import Node
 import utility_functions as uf
+import time
 
 # Définition des couleurs
 WHITE = (255, 255, 255)
@@ -49,16 +50,12 @@ class Menu(Window):
             sys.exit()
 
 
-class Screen(Window):
-    def __init__(self, largeur, hauteur, titre):
-        super().__init__(largeur, hauteur, titre)
-
-
 class MAP(Window):
     def __init__(self, largeur, hauteur, titre):
         super().__init__(largeur, hauteur, titre)
+        self.largeur = largeur
+        self.hauteur = hauteur
         self.node = []
-        self.connections = []
         self.screen = pygame.display.set_mode((largeur, hauteur))
         self.text_niveau = ""
         pygame.display.set_caption(titre)
@@ -70,12 +67,36 @@ class MAP(Window):
             
     
     # Fonction pour dessiner les connexions
-    def draw_connections(self, nodes):
+    def draw_connections(self):
         for node in self.nodes:    
             for connection in node.following:        
                 start_pos = (node.x, node.y)
                 end_pos = (connection.x, connection.y)
-                uf.draw_arrow(self.screen, pygame.Vector2(start_pos), pygame.Vector2(end_pos), WHITE, 2, 12, 5)
+                uf.draw_arrow(self.screen, pygame.Vector2(start_pos), pygame.Vector2(end_pos), WHITE, 2, 12, 10)
+                    
+
+    def border_scree(self, color:tuple):
+        pygame.draw.rect(self.screen, color, (0, 0, self.largeur, self.hauteur), 10)
+        pygame.display.flip()
+        time.sleep(0.3)
+        # Rétablir la couleur du bord initial
+        pygame.draw.rect(map.screen, color, (0, 0, self.largeur, self.hauteur), 10)
+        pygame.display.flip()
+    
+
+    def win_screen(self, n):
+        print(n)
+        self.screen.fill(BLACK)
+        if n == "Tuto":
+            self.afficher_texte("Tout les noeuds sont de la même couleur !", self.largeur // 2, self.hauteur // 2)
+        if n == "Tuto 2":
+            self.afficher_texte("Tu as fini le tutoriel !", self.largeur // 2, self.hauteur // 2)
+        if n == "hidden_win":
+            self.afficher_texte("Tu as relié tout les noeuds sans en changer la couleur intéressant..", self.largeur // 2, self.hauteur // 2)
+        
+    def lose_screen(self):
+        self.screen.fill(BLACK)
+        self.afficher_texte("Retry", self.largeur // 2, self.hauteur // 2)
 
     def initialiser_niveau(self, n):
         # Initialisation des nœuds
@@ -85,6 +106,11 @@ class MAP(Window):
                 Node(350, 200, RED),
                 Node(375, 300, GREEN),
             ]
+            for node in self.nodes:
+                node.activations = {'size' : False, 
+                            'reach' : False, 
+                            'color' : True}
+
         if n == "Tuto 2":
             self.nodes = [
                 Node(400, 200, RED),
@@ -115,14 +141,43 @@ class MAP(Window):
 
         
         self.draw_nodes(self.nodes)
-        self.draw_connections(self.nodes)
+
+        self.draw_connections()
+
 
     def update_nodes(self):
         for node in self.nodes:
             node.update_color()
 
+    def equilibre_node(self):
+        res = {}
+        for node in self.nodes:
+            if node.couleur in res.keys():
+                res[node.couleur] += 1
+            else:
+                res[node.couleur] = 1
+        if len(set(res.values())) != 1:
+            return False
+        else :
+            return True
+        
+    def equilibre_links(self):
+        if not False in [len([follow.couleur for follow in node.following]) >= 2 for node in self.nodes] :
+            return True
+        else:
+            False
+            
+
     def win_condition(self):
         if len(set([node.couleur for node in self.nodes])) == 1:
+            return True
+        elif self.equilibre_links() and self.equilibre_node() :
+            return "hidden_win"
+        else :
+            return False
+    
+    def lose_condition(self) :
+        if sum([len(node.following) for node in self.nodes]) == (2*len(self.nodes) + 1):
             return True
         else:
             return False
