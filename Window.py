@@ -100,6 +100,9 @@ class MAP(Window):
 
     def initialiser_niveau(self, n:str):
         # Initialisation des nœuds
+
+        
+
         if n == "Tuto":
             self.nodes = [
                 Node(400, 200, RED),

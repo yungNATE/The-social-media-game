@@ -1,10 +1,15 @@
-import pygame
-import math
-import utility_functions as uf
 import sys
+import math
+import time
+import html
+
+import pygame
+import pygame_widgets
+from pygame_widgets.button import Button
+import utility_functions as uf
+
 from Window import MAP
 from Node import Node
-import time
 
 # Définition des couleurs
 WHITE = (255, 255, 255)
@@ -18,8 +23,9 @@ if __name__ == "__main__":
     # Initialisation de Pygame
     pygame.init()
     map = MAP(800, 600, "Jeu")
+    TIMEOUT = 1.5
     cpt = 0
-    lvl_list = ["Tuto", "Tuto 2", "Niveau 1", "Niveau 2"]
+    lvl_list = ["Tuto", "Tuto 2", "Niveau 1"]
     current_level = lvl_list[0]
     map.initialiser_niveau("Tuto")
     # map.initialiser_niveau("Tuto 2")
@@ -32,24 +38,47 @@ if __name__ == "__main__":
     cursor_over_max_limit = False
     limited_cursor_position = (0,0)
 
+    BTN_WIDTH = 50
+    BTN_HEIGHT = 25
+    BTN_OFFSET = 25
+
+    retryButton = Button(
+        # Mandatory Parameters
+        map.screen,  # Surface to place button on
+        (map.screen.get_width() - BTN_WIDTH) - BTN_OFFSET,  # X-coordinate of top left corner
+        BTN_OFFSET,  # Y-coordinate of top left corner
+        BTN_WIDTH,  # Width
+        BTN_HEIGHT,  # Height
+
+        # Optional Parameters
+        text="Reset",  # Text to display
+        fontSize=18,  # Size of font
+        margin=20,  # Minimum distance between text/image and edge of button
+        inactiveColour=(200, 50, 0),  # Colour of button when not being interacted with
+        hoverColour=(150, 0, 0),  # Colour of button when being hovered over
+        pressedColour=(0, 200, 20),  # Colour of button when being clicked
+        radius=20,  # Radius of border corners (leave empty for not curved)
+        onClick=lambda: map.initialiser_niveau(current_level)  # Function to call when clicked on
+    )
+
+
     while True:
-        if map.win_condition() == True :
-            cpt+=1
-            time.sleep(3)
-            map.win_screen(current_level)
+        if map.win_condition():
+
+            time.sleep(TIMEOUT)
+
+            texte = map.win_condition() if map.win_condition() != True else current_level
+            map.win_screen(texte)
             pygame.display.flip()
-            time.sleep(3)
+
+            time.sleep(TIMEOUT)
+
+            cpt+=1
+            if(cpt >= len(lvl_list)): cpt = len(lvl_list) - 1
             current_level = lvl_list[cpt]
             map.initialiser_niveau(current_level)
+
         
-        if map.win_condition() == "hidden_win":
-            cpt+=1
-            time.sleep(3)
-            map.win_screen("hidden_win")
-            pygame.display.flip()
-            time.sleep(3)
-            current_level = lvl_list[cpt]
-            map.initialiser_niveau(current_level)
 
         # if map.lose_condition() :
         #     time.sleep(3)
@@ -59,7 +88,10 @@ if __name__ == "__main__":
         #     current_level = lvl_list[cpt]
         #     map.initialiser_niveau(current_level)
 
-        for event in pygame.event.get():
+        events = pygame.event.get()
+
+        
+        for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -106,7 +138,11 @@ if __name__ == "__main__":
                     current_node = None
                     cursor_position = None
 
+
+
         map.afficher_contenu()
+        pygame_widgets.update(events)
+        pygame.display.update()
             
         # Dessine la ligne en cours de drag
         if dragging:
