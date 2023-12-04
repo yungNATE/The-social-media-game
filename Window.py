@@ -75,12 +75,12 @@ class MAP(Window):
                 uf.draw_arrow(self.screen, pygame.Vector2(start_pos), pygame.Vector2(end_pos), WHITE, 2, 12, 10)
                     
 
-    def border_scree(self, color:tuple):
+    def border_screen(self, color:tuple):
         pygame.draw.rect(self.screen, color, (0, 0, self.largeur, self.hauteur), 10)
         pygame.display.flip()
         time.sleep(0.3)
         # Rétablir la couleur du bord initial
-        pygame.draw.rect(map.screen, color, (0, 0, self.largeur, self.hauteur), 10)
+        pygame.draw.rect(self.screen, color, (0, 0, self.largeur, self.hauteur), 10)
         pygame.display.flip()
     
 
@@ -98,7 +98,7 @@ class MAP(Window):
         self.screen.fill(BLACK)
         self.afficher_texte("Retry", self.largeur // 2, self.hauteur // 2)
 
-    def initialiser_niveau(self, n):
+    def initialiser_niveau(self, n:str):
         # Initialisation des nœuds
         if n == "Tuto":
             self.nodes = [
@@ -168,7 +168,7 @@ class MAP(Window):
             False
             
 
-    def win_condition(self):
+    def win_condition(self): 
         if len(set([node.couleur for node in self.nodes])) == 1:
             return True
         elif self.equilibre_links() and self.equilibre_node() :
@@ -176,7 +176,7 @@ class MAP(Window):
         else :
             return False
     
-    def lose_condition(self) :
+    def lose_condition(self):
         if sum([len(node.following) for node in self.nodes]) == (2*len(self.nodes) + 1):
             return True
         else:

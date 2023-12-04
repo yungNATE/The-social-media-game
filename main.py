@@ -93,7 +93,7 @@ if __name__ == "__main__":
                         isFollowSuccessful = current_node.follow(node)
                         if isFollowSuccessful: 
                             map.update_nodes()
-                            map.border_screen(color=GREEN)
+                            # map.border_screen(color=GREEN)
                             
 
     
