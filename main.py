@@ -142,7 +142,6 @@ if __name__ == "__main__":
 
         map.afficher_contenu()
         pygame_widgets.update(events)
-        pygame.display.update()
             
         # Dessine la ligne en cours de drag
         if dragging:
